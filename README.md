@@ -8,6 +8,9 @@
 ## 課程紀錄
 
 ### Week 1
+####課前
+  ．無
+####課間
   ．建立個人Github
 
   ．完成 readme
@@ -17,3 +20,13 @@
   ．上傳 Rmarkdown
 
    [HW1](https://jason10130021.github.io/CS-X_106_Summer/week%201/hw1.html)
+
+####課後
+  ．無
+
+### Week 2
+####課前
+  ．[DataCamp] Introduction
+  ．[DataCamp] Intermediate
+
+####課間
