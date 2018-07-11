@@ -20,7 +20,7 @@
 
   ．上傳 Rmarkdown
 
-   [HW1](https://jason10130021.github.io/CS-X_106_Summer/week%201/hw1.html)
+  ．[HW1](https://jason10130021.github.io/CS-X_106_Summer/week%201/hw1.html)
 
 #### 課後
   ．無
@@ -32,3 +32,6 @@
   ．[DataCamp] Intermediate
 
 #### 課間
+  ．ggplot2運用
+  
+  ．[HW2](https://jason10130021.github.io/CS-X_106_Summer/week%202/hw2_beaver1_.html)
