@@ -1,4 +1,9 @@
-#網路爬蟲
+#PTT文字雲_爐石版
+###王良軒
+###2018-07-12
+
+##爬蟲程式
+```{R}
 library(xml2)
 library(tmcn)
 library(rvest)
@@ -23,18 +28,20 @@ pttTestFunction <- function(URL, filename)
   write.table(allText, filename) 
   #close(out) 
 }
+```
 
-#PTT爐石版
+##爬蟲程序
+```{R}
 id = c(1:10)
 URL = paste0("https://www.ptt.cc/bbs/Hearthstone/index", id, ".html")
 filename = paste0(id, ".txt")
 pttTestFunction(URL[1], filename[1])
 mapply(pttTestFunction, 
        URL = URL, filename = filename)
+```
 
-
-#文本清理
-
+##文本清理
+```{R}
 rm(list=ls(all.names = TRUE))
 library(NLP)
 library(tm)
@@ -293,15 +300,15 @@ docs <- tm_map(docs, toSpace, "定")
 docs <- tm_map(docs, toSpace, "送")
 docs <- tm_map(docs, toSpace, "期")
 docs <- tm_map(docs, toSpace, "起")
-
 #移除標點符號 (punctuation)
 #移除數字 (digits)、空白 (white space)
 docs <- tm_map(docs, removePunctuation)
 docs <- tm_map(docs, removeNumbers)
 docs <- tm_map(docs, stripWhitespace)
+```
 
-#詞頻矩陣
-
+##詞頻矩陣
+```{R}
 mixseg = worker()
 jieba_tokenizer=function(d){
   unlist(segment(d[[1]],mixseg))
@@ -311,12 +318,46 @@ freqFrame = as.data.frame(table(unlist(seg)))
 freqFrame = freqFrame[order(freqFrame$Freq,decreasing=TRUE), ]
 library(knitr)
 kable(head(freqFrame), format = "markdown")
+```
 
-#製作文字雲
-
+##製作文字雲
+```{R}
 wordcloud(freqFrame$Var1,freqFrame$Freq,
           scale=c(5,0.5),min.freq=50,max.words=150,
           random.order=TRUE, random.color=FALSE, 
           rot.per=.1, colors=brewer.pal(8, "Dark2"),
           ordered.colors=FALSE,use.r.layout=FALSE,
           fixed.asp=TRUE)
+```
+
+###文字雲分析
+我以自身遊戲體驗和文字雲的發現，得到以下幾點論點：
+
+1. 從最大的「競技場」樣式來看，可以看出競技場模式在爐石中的地位，因為爐石只要一個版本沒有跟上，基本上就組不了新牌打標
+準模式，所以有些玩家只打競技場，競技場只需要有觀念和牌技，不需要自己養成牌組。
+
+2. 生物、牧師、法師是第三大的字樣，就最近幾個版本的現象來看也十分合理。法師一直都是熱門牌組；牧師過去幾個版本一直都有
+非常強勢的牌組；生物在爐石中直接影響場面，可以說是贏牌最重要的元素。
+
+3. 接下來少數在文字雲中的職業和牌組是戰士、術士、薩滿還有嘲諷。戰士這季可以組嘲諷戰；術士出現頻率很高八成是因為上一個
+版本術士可以說是最強牌組;薩滿在新版本中有偶數薩和嘯斗薩兩套新牌可以玩；嘲諷是一個固定戰術的牌組，目前版本有嘲諷戰和嘲諷德魯伊，都頗強勢。
+
+若沒玩過爐石的人，這裡有官網的 [介紹](https://playhearthstone.com/zh-tw/game-guide)。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
