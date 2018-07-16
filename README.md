@@ -38,11 +38,17 @@
 #### 課後
   ．[HW2-2](https://jason10130021.github.io/CS-X_106_Summer/week%202/hw2-2_ptt%E6%96%87%E5%AD%97%E9%9B%B2_.html)
   
+  ．[DataCamp] Data Visualization with GGPLOT2
+  
+  ．[DataCamp] Introduction to the Tidyverse
+  
+  ．[DataCamp] Exploratory Data Analysis
+  
 ### Week 3  
 #### 課前
   ．完成指定閱讀：
-  ．[DataCamp] Data Visualization with GGPLOT2
-  ．[DataCamp] 
+  
+  ．ff
 #### 課間
 
 #### 課後
