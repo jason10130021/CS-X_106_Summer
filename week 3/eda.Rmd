@@ -1,0 +1,189 @@
+#Should I Do a PHD?
+王良軒
+
+2018-07-18
+
+Data from: [https://www.kaggle.com/owise83/should-i-do-a-phd/data](https://www.kaggle.com/owise83/should-i-do-a-phd/data) 
+
+### 主旨
+作者在前言說道想藉由此分析調查高學歷和高收入是否存在某種相關性，並進一步讓人明白是否應該向上追求博士學位？
+
+### 1.Setup
+#### 1.1 匯入套件
+```{R}
+library("dplyr")
+library("data.table")
+library("ggplot2")
+library("choroplethr")
+```
+
+#### 1.2 匯入資料並命名各欄位
+```{R}
+colsToKeep <- c("PINCP", "SCHL", "ESR", "ST")
+popDataA <- fread("G:/Programming/homework/CS-X_106_Summer/week 3/Data/ss13pusa.csv", select=colsToKeep )  
+popDataB <- fread("G:/Programming/homework/CS-X_106_Summer/week 3/Data/ss13pusb.csv", select=colsToKeep )
+populData <- rbind(popDataA, popDataB)
+rm(popDataA, popDataB)
+save(populData, file="populData.RData")
+```
+
+### 2. 全美學士、碩士和博士的人數比較
+作者想先了解全美學士、碩士、博士的人數。
+
+#### 2.1 資料整理
+先將資料整理成方便操作的樣貌，其中最重要的是"SCHL"這個欄位，它代表每筆觀察的學歷，欄位中的數值代表的是畢業歲數，因此作者將21歲定義為大學畢業、22為碩班畢業，同時，這份分析只研究最高學歷為學士、碩士、博士學位的人。
+```{R}
+populData <- tbl_df(populData) 
+ds <-  populData %>%  
+       na.omit() %>%
+       filter(SCHL %in%  c(21,22,24)) %>%
+       group_by(SCHL) 
+degreeCode = "SCHL,DegLevel
+21,Bachelor 
+22,Masters
+24,Doctorate"
+degreCodes <- fread(degreeCode)
+```
+#### 2.2 資料視覺化
+```{R}
+degreeHolders <-  summarise(ds, count=n())
+degreeHolders <- left_join(degreeHolders , degreCodes, by.x=c("SCHL"))
+Degrees <- factor(degreeHolders$DegLevel, levels = unique(degreeHolders$DegLevel))
+
+ggplot(degreeHolders, aes(x= Degrees , y=degreeHolders$count, fill= Degrees)) +   
+     geom_bar(stat="identity") + scale_fill_hue(l=40) +
+     ylab("No of People") + 
+     xlab("Degree") + ggtitle("Comparing Degrees Holders in the US") +
+     theme(axis.text.x = element_text(angle = 30, hjust = 1),
+     panel.background = element_rect(fill = 'white' ))
+```
+
+### 3. 全美學士、碩士、博士學歷者失業率比較
+#### 3.1 建立新的清單以方便製圖
+```{R}
+jobLess <- ds %>%
+           filter(ESR==3)%>% #3 indicates  Unemployed
+           group_by(SCHL) %>% 
+           summarise(count=n())%>%
+           mutate(Percet = count/degreeHolders$count*100)
+```
+#### 3.2 視覺化
+```{R}
+ggplot(jobLess, aes(x= Degrees , y=jobLess$Percet, fill= Degrees)) +                        
+       geom_bar(stat="identity") + scale_fill_hue(l=80) +
+       ylab("Percent %") + 
+       xlab("Degree") + ggtitle("Percentages of Unemployed Degree  Holders")+
+       theme(axis.text.x = element_text(angle = 30, hjust = 1),
+       panel.background = element_rect(fill = 'white' ))
+```
+
+### 4. 全美學士、碩士、博士學歷收入比較。
+#### 4.1 建立新清單以方便製圖
+```{R}
+aboveThousand <- ds %>%
+                 filter(PINCP>1000)%>%
+                 group_by(SCHL) 
+freq <- 5000 #How many subsets are we creating
+allStat <- NULL
+for(i in 1:freq){
+  tempSample <-  sample_n(aboveThousand,1000)
+  sampleStat <- summarise(tempSample, MinIncome=min(PINCP), MaxIncome=max(PINCP),
+                          MedianIncome=median(PINCP), IncomeRange=IQR(PINCP))  
+  allStat <- rbind(allStat, sampleStat)
+}
+ranSamples <- allStat %>% 
+              arrange(SCHL) 
+
+SummaryStat <- ranSamples %>%
+               group_by(SCHL) %>%
+               select(MinIncome,  MaxIncome,	MedianIncome,	IncomeRange)%>%
+               lapply(mean, na.rm = TRUE)
+ranSamples <- left_join(ranSamples , degreCodes, by.x=c("SCHL"))
+```
+#### 4.2 視覺化
+```{R}
+Degrees <- factor(ranSamples$DegLevel, levels = unique(ranSamples$DegLevel))
+ggplot(ranSamples, aes(x=Degrees, y=MedianIncome, fill=Degrees ) ) +  
+      geom_boxplot(notch = FALSE, outlier.colour="#CC6600") +
+      scale_fill_manual(name = "", values = c("#00BFFF", "#66FF00", "#CC0033")) +
+      theme(panel.background = element_rect(fill = 'white' )) +
+      ggtitle("Comparing Income of Degrees Holders")  
+```
+
+### 5. 小結
+作者由以上三個圖表分析得到結果：學歷越高，通常失業率越低，且收入也越高。因此，高學歷在現今社會，依舊是人們為了追求更好的物質生活品質，可以追求的方向。
+
+### 6. 依樣畫葫蘆
+在做的過程，由於作者只比較了學士、碩士與博士三個職業，我不禁有另一個疑問：不讀大學會不會對未來有影響？因此接下來會加入只有高中畢業的人們一起做以上三種比較，希望能得到解答。(美國的教育體制基本上要求學生要就讀到18歲，因此以下篩選時，會以SCHL值為18當作高中畢業但未就讀大學)
+
+#### 6.1 全美無學士文憑、學士、碩士、博士人數比較
+```{R}
+ds_6 <-  populData %>%  
+  na.omit() %>%
+  filter(SCHL %in%  c(18,21,22,24)) %>%
+  group_by(SCHL) 
+rm(populData)
+degreeCode_6 = "SCHL,DegLevel
+18,HighSchool
+21,Bachelor 
+22,Masters
+24,Doctorate"
+degreCodes_6 <- fread(degreeCode_6)
+degreeHolders_6 <-  summarise(ds_6,count=n())
+degreeHolders_6 <- left_join(degreeHolders_6 , degreCodes_6, by.x=c("SCHL"))
+Degrees_6 <- factor(degreeHolders_6$DegLevel, levels = unique(degreeHolders_6$DegLevel))
+ggplot(degreeHolders_6, aes(x= Degrees_6 , y=degreeHolders_6$count, fill= Degrees_6)) +   
+  geom_bar(stat="identity") + scale_fill_hue(l=40) +
+  ylab("Nb. of People") + 
+  xlab("Degree") + ggtitle("Comparing Degrees Holders in the US") +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        panel.background = element_rect(fill = 'white' ))
+```
+
+#### 6.2 全美無學士文憑、學士、碩士、博士失業率比較
+```{R}
+jobLess_6 <- ds_6 %>%
+  filter(ESR==3)%>% #3 indicates  Unemployed
+  group_by(SCHL) %>% 
+  summarise(count=n())%>%
+  mutate(Percet = count/degreeHolders_6$count*100)
+ggplot(jobLess_6, aes(x= Degrees_6 , y=jobLess_6$Percet, fill= Degrees_6)) +      geom_bar(stat="identity") + scale_fill_hue(l=80) +
+  ylab("Percent %") + 
+  xlab("Degree") + ggtitle("Percentages of Unemployed Degree  Holders")+
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        panel.background = element_rect(fill = 'white' ))
+```
+
+#### 6.3 全美無學士文憑、學士、碩士、博士收入比較
+```{R}
+aboveThousand_6 <- ds_6 %>%
+  filter(PINCP>1000)%>%
+  group_by(SCHL) 
+freq <- 5000
+allStat_6 <- NULL
+for(i in 1:freq){
+  tempSample <-  sample_n(aboveThousand_6,1000)
+  sampleStat <- summarise(tempSample, MinIncome=min(PINCP), MaxIncome=max(PINCP),
+                          MedianIncome=median(PINCP), IncomeRange=IQR(PINCP))  
+  allStat_6 <- rbind(allStat, sampleStat)
+}
+ranSamples_6 <- allStat_6 %>% 
+  arrange(SCHL) 
+
+SummaryStat <- ranSamples_6 %>%
+  group_by(SCHL) %>%
+  select(MinIncome,  MaxIncome,	MedianIncome,	IncomeRange)%>%
+  lapply(mean, na.rm = TRUE)
+ranSamples_6 <- left_join(ranSamples_6 , degreCodes_6, by.x=c("SCHL"))
+
+Degrees_6 <- factor(ranSamples_6$DegLevel, levels = unique(ranSamples_6$DegLevel))
+ggplot(ranSamples_6, aes(x=Degrees_6, y=MedianIncome, fill=Degrees_6 ) ) +  
+  geom_boxplot(notch = FALSE, outlier.colour="#CC6600") +
+  scale_fill_manual(name = "", values = c("#f4a460", "#00BFFF", "#66FF00", "#CC0033")) +
+  theme(panel.background = element_rect(fill = 'white' )) +
+  ggtitle("Comparing Income of Degrees Holders")  
+```
+
+#### 6.4 小結
+人數上，還是學士文憑為大宗；只有高中文憑的失業率是四種學歷中最高的，且收入遠遠低於其他三者，我一開始還以為是圖表畫錯，還加Log試，但結果還是一樣，由此得知，在美國，如果希望未來物質生活能有一定的水準，還是至少擁有大學文憑比較有保障。
+
