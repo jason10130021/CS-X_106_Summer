@@ -37,7 +37,6 @@
   ．製作文字雲：利用爬蟲程式爬下指定ptt版、進行文字清洗、製作詞頻矩陣與文字雲
   
    ．[HW2-2](https://jason10130021.github.io/CS-X_106_Summer/week%202/hw2-2_ptt%E6%96%87%E5%AD%97%E9%9B%B2_.html)
-  
 #### 課後
   ．[DataCamp] Data Visualization with GGPLOT2
   
@@ -47,9 +46,31 @@
   
 ### Week 3  
 #### 課前
-  ．完成指定閱讀：
+  ．完成指定閱讀: EDA、TF-IDF
+#### 課間
+  ．EDA: 在kaggle找到有興趣的文章，完成簡報
   
-  ．ff
+  ．[HW3-1](https://jason10130021.github.io/CS-X_106_Summer/week%203/eda.html) 
+  
+  ．Text Mining: 運用TF-IDF、PCA、Kmeans 完成文字探勘報告
+  
+  ．[HW3-2](https://jason10130021.github.io/CS-X_106_Summer/week%203/hw3-2_tfidf-pca-kmeans.html)
+#### 課後
+  ．完成課堂作業
+  
+  ．完成未完成指定閱讀: PCA、Kmeans
+  
+### Week 4
+#### 課前
+  ．[Data Camp] Basic Statistics
+  
+  ．[Data Camp] Coorelation and Regression
+  
+  ．完成指定閱讀: Statistics、
 #### 課間
 
 #### 課後
+
+
+### Week 5
+  
