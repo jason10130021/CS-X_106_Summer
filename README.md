@@ -72,8 +72,6 @@
 #### 課後
   ．[HW4](https://jason10130021.github.io/CS-X_106_Summer/week%204/hw4-1_eda2.html)
   
-  ．完成指定閱讀: Statistics
-  
   ．《期末專題》: 與組員討論主題，已暫定一題目，正在尋找相關資源
 
 ### Week 5
