@@ -78,8 +78,10 @@
 #### 課前
   ．完成指定閱讀: Shinny
 #### 課間
-  ．
+  ．張東城主任演講
   
-  ．
+  ．Shiny Live Coding
+  
+  ．[HW5](https://jason10130021.shinyapps.io/homework5/)
 #### 課後
   ．
