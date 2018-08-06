@@ -188,7 +188,7 @@ names(show)<- c("Name", "Counts", "Type")
 # 4.2.5 將show 畫成圖
 ggplot(show, aes(x=Type, y=Counts, fill=Name))+
   geom_col()+
-  labs(title=paste0(year, "2008-2018年間最多動畫數類型與特色"), x="類型VS特色", y="數量")
+  labs(title="2008-2018年間最多動畫數類型與特色", x="類型VS特色", y="數量")
 
 
 
