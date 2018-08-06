@@ -85,7 +85,7 @@ ggplot(anime_20xx, aes(x=(as.Date(MD, format="%m-%d")), y=Popularity, col=Catego
   geom_point()+
   scale_y_continuous(limits= c(0,3000))+
   geom_hline(aes(yintercept=summ[5]))+
-  labs(title=year, x="Time")
+  labs(title=year, x="Time")    #X軸有個他媽的2018
 # 2.3 人氣高於該年Q3動畫之類型數量比較
 ggplot(over_Q3, aes(x=Category, fill=Category))+
   geom_bar()+
@@ -105,4 +105,91 @@ ggplot(over_Q3_feature_count, aes(x=Feature, fill=Feature))+
   geom_bar()+
   labs(title=paste("人氣高於該年Q3動畫之特色數量比較"))+
   scale_y_continuous(limits=c(0,500))
+
+# 3. 特定年次類型與特色顯著性比較
+# 3.1 先建立over_Q3_20xx 和 feature_count_20xx
+year<- 2009    #亂設一個
+over_Q3_20xx<- over_Q3%>%
+  filter(Year==year)
+feature_count_20xx<- data.frame()
+for (i in c(1:nrow(over_Q3_20xx))){
+  temp<- strsplit(over_Q3_20xx[i,3], split='[、]')[[1]]
+  for (j in c(1:3)){
+    feature_count_20xx[3*(i-1)+j,1]<- temp[j]
+  }
+}
+names(feature_count_20xx)<- "Feature"
+# 3.2.1 建立要呈現的data.frame
+show<- data.frame()
+# 3.2.2 將 feature_count_20xx 中的特色計次
+feature_count_20xx<- mutate(feature_count_20xx, count=1)
+feature_count_20xx<- feature_count_20xx%>%
+  group_by(Feature)%>%
+    summarize(sum(count))%>%
+      as.data.frame()
+feature_count_20xx<- arrange(feature_count_20xx, desc(`sum(count)`))
+# 3.2.3 將 over_Q3_20xx 中的類型計次
+over_Q3_20xx<- mutate(over_Q3_20xx, count=1)
+over_Q3_20xx<- over_Q3_20xx%>%
+  group_by(Category)%>%
+    summarize(sum(count))%>%
+      as.data.frame()
+over_Q3_20xx<- arrange(over_Q3_20xx, desc(`sum(count)`))
+# 3.2.4 將 over_Q3_20xx 和 feature_count_20xx 中數值匯入 show
+show[1,1]<- over_Q3_20xx[1,1]
+show[1,2]<- over_Q3_20xx[1,2]
+show[1,3]<- "類型"
+show[2,1]<- feature_count_20xx[1,1]
+show[2,2]<- feature_count_20xx[1,2]
+show[2,3]<- "特色"
+names(show)<- c("Name", "Counts", "Type")
+# 3.2.5 將show 畫成圖
+ggplot(show, aes(x=Type, y=Counts, fill=Name))+
+  geom_col()+
+  labs(title=paste0(year, "年最多動畫數類型與特色"), x="類型VS特色", y="數量")
+
+
+
+
+# 4. 過去11年類型與特色顯著性比較
+# 4.1 先建立feature_count_20xx
+feature_count<- data.frame()
+for (i in c(1:nrow(over_Q3))){
+  temp<- strsplit(over_Q3[i,3], split='[、]')[[1]]
+  for (j in c(1:3)){
+    feature_count[3*(i-1)+j,1]<- temp[j]
+  }
+}
+names(feature_count)<- "Feature"
+# 4.2.1 建立要呈現的data.frame
+show<- data.frame()
+# 4.2.2 將 feature_count 中的特色計次
+feature_count<- mutate(feature_count, count=1)
+feature_count<- feature_count%>%
+  group_by(Feature)%>%
+  summarize(sum(count))%>%
+  as.data.frame()
+feature_count<- arrange(feature_count, desc(`sum(count)`))
+# 4.2.3 將 over_Q3_20xx 中的類型計次
+over_Q3<- mutate(over_Q3, count=1)
+over_Q3<- over_Q3%>%
+  group_by(Category)%>%
+  summarize(sum(count))%>%
+  as.data.frame()
+over_Q3<- arrange(over_Q3, desc(`sum(count)`))
+# 4.2.4 將 over_Q3_20xx 和 feature_count_20xx 中數值匯入 show
+show[1,1]<- over_Q3[1,1]
+show[1,2]<- over_Q3[1,2]
+show[1,3]<- "類型"
+show[2,1]<- feature_count[1,1]
+show[2,2]<- feature_count[1,2]
+show[2,3]<- "特色"
+names(show)<- c("Name", "Counts", "Type")
+# 4.2.5 將show 畫成圖
+ggplot(show, aes(x=Type, y=Counts, fill=Name))+
+  geom_col()+
+  labs(title=paste0(year, "2008-2018年間最多動畫數類型與特色"), x="類型VS特色", y="數量")
+
+
+
 
