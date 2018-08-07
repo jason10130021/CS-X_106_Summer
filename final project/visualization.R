@@ -1,6 +1,7 @@
 library(ggplot2)
 library(dplyr)
 library(gridExtra)
+library(DT)
 # 種類 VS 特色
 # 1. 種類、特色占比
 # 1.1 十年間種類占比 
@@ -67,8 +68,6 @@ for (i in c(2008:2018)){
     scale_y_continuous(limits = c(0,3000))+
     geom_hline(aes(yintercept=summ[5]))+
     labs(title=paste0(i), x="Time")
-  name<- paste0("plot_", i)
-  assign(name, plot_20xx)
 }
 saveRDS(over_Q3, "over_Q3.rds")
 
@@ -170,7 +169,7 @@ feature_count<- feature_count%>%
   summarize(sum(count))%>%
   as.data.frame()
 feature_count<- arrange(feature_count, desc(`sum(count)`))
-# 4.2.3 將 over_Q3_20xx 中的類型計次
+# 4.2.3 將 over_Q3 中的類型計次
 over_Q3<- mutate(over_Q3, count=1)
 over_Q3<- over_Q3%>%
   group_by(Category)%>%
@@ -189,6 +188,48 @@ names(show)<- c("Name", "Counts", "Type")
 ggplot(show, aes(x=Type, y=Counts, fill=Name))+
   geom_col()+
   labs(title="2008-2018年間最多動畫數類型與特色", x="類型VS特色", y="數量")
+
+
+
+
+
+
+#================================================================================
+# feature_count v2
+feature_count_vector<- vector()
+for (i in c(1:nrow(anime_20xx))){
+  temp<- strsplit(anime_20xx[i,3], split='[、]')[[1]]
+  for (j in c(1:length(temp))) {
+    feature_count_vector<- append(feature_count, temp[j])
+  }
+}
+feature_count<- data.frame(Feature= feature_count_vector)
+ggplot(feature_count, aes(x= Feature, fill=Feature))+
+  geom_bar()
+
+
+# feature_count for feat_pro_bar
+feature_count_vector<- as.vector()
+for (i in c(1:nrow(anime_20xx))){
+  temp<- strsplit(anime_20xx[i,3], split="[、]")[[1]]
+  for (j in c(1:length(temp))) {
+    feature_count_vector<- append(feature_count, temp[j])
+  }
+}
+feature_count<- data.frame(Feature= feature_count_vector)
+
+#feature_count for feat_overQ3
+over_Q3_feature_count<- data.frame()
+for (k in c(1:length(over_Q3))){
+  temp<- strsplit(over_Q3[k,3], split='[、]')[[1]]
+  for (l in c(1:3)){
+    over_Q3_feature_count[3*(k-1)+l,1]<- temp[l]
+  }
+}
+names(over_Q3_feature_count)<- "Feature"
+
+
+
 
 
 
