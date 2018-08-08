@@ -88,4 +88,8 @@
 #### Final Project
   ．[Source Code](https://github.com/jason10130021/CS-X_106_Summer/blob/master/final%20project/app.R)
   
+    (目前暫時無法publish成功)
+  
+  ．[PPT](https://github.com/jason10130021/CS-X_106_Summer/blob/master/final%20project/Report%20of%20Animation.pptx)
+  
   
