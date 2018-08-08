@@ -83,5 +83,9 @@
   ．Shiny Live Coding
   
   ．[HW5](https://jason10130021.shinyapps.io/homework5/)
-#### 課後
-  ．
+  
+### Week 6 
+#### Final Project
+  ．[Source Code](https://github.com/jason10130021/CS-X_106_Summer/blob/master/final%20project/app.R)
+  
+  
